@@ -6,7 +6,10 @@ export default async function Page() {
   const supabase = await createClient()
   const { data } = await supabase.from('ExerciseDemographics').select()
 
-  return ( 
+  return (
+    <div>
+      <h1 className='mb-4'>Create a Workout</h1>
     <WorkoutList workouts={data ?? []}/>
+    </div>
   );
 }
