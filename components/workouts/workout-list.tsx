@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { IWorkoutList } from "@/lib/workoutInterfaces/IWorkoutList";
+import { SubmitButton } from '../submit-button';
 
 export default function WorkoutList({ workouts }: IWorkoutList) {
     const [searchTerm, setSearchTerm] = useState('');
@@ -36,6 +37,31 @@ export default function WorkoutList({ workouts }: IWorkoutList) {
             <span>Loading...</span>
         );
     }
+
+    const saveWorkout = async () => {
+        try {
+            const response = await fetch('/api/workouts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    workouts: selectedWorkouts
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to save workout');
+            }
+
+            const data = await response.json();
+            // Handle successful save (e.g., show success message)
+            
+        } catch (error) {
+            console.error('Error saving workout:', error);
+            // Handle error (e.g., show error message)
+        }
+    };
 
     return (
         <div>
@@ -86,9 +112,11 @@ export default function WorkoutList({ workouts }: IWorkoutList) {
                                 ))}
                             </ol>
                         )}
+                        
                     </div>
                 </div>
             </div>
+            <SubmitButton  onClick={saveWorkout}>Submit</SubmitButton>
         </div>
     );
 }
