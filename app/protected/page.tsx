@@ -1,3 +1,4 @@
+import Timer from "@/components/timer";
 import FetchDataSteps from "@/components/tutorial/fetch-data-steps";
 import CreateUsername from "@/components/users/create-username";
 import { createClient } from "@/utils/supabase/server";
@@ -14,8 +15,6 @@ export default async function ProtectedPage() {
   if (!user) {
     return redirect("/sign-in");
   }
-
-  console.log(user);
   
   const {
     data: UserInfo, error
@@ -25,8 +24,6 @@ export default async function ProtectedPage() {
     console.error('Error fetching user: ', error)
   }
 
-
-  console.log(UserInfo);
 
   if(!UserInfo) {
     return(
@@ -43,6 +40,10 @@ export default async function ProtectedPage() {
         <p className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
           Welcome {UserInfo.Username}!
         </p>
+        <Timer />
+        <div className="mt-4">
+          <p className="text-sm text-gray-500">Checking credientials...</p>
+        </div>
       </div>
    
     </div>

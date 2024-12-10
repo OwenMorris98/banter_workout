@@ -70,7 +70,7 @@ export default function ExerciseList({ exercises, workoutName }: CreateWorkoutPr
 
     return (
         <div>
-            {successFlag && (
+            {!successFlag && (
                 <>
             <h1 className='mb-4'>Create a Workout</h1>
             <div className='flex flex-row lg:w-100'>
@@ -126,7 +126,7 @@ export default function ExerciseList({ exercises, workoutName }: CreateWorkoutPr
             </div>
             <SubmitButton onClick={saveExercise}>Submit</SubmitButton>
             </>
-        ) }
+        )};
                     {successFlag && <span>Workout Created!</span>}
         </div>
     );
