@@ -1,15 +1,36 @@
-import WorkoutList from '@/components/workouts/workout-list';
+import ExerciseList from '@/components/workouts/excercise-list';
+import WorkoutButton from '@/components/workouts/workout-button';
+import MyWorkoutList from '@/components/workouts/workout-list';
 import { createClient } from '@/utils/supabase/server'
-import { IWorkoutList } from '@/lib/workoutInterfaces/IWorkoutList';
 
 export default async function Page() {
   const supabase = await createClient()
-  const { data } = await supabase.from('ExerciseDemographics').select()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  const { data: exerciseList, error : exercisListError } = await supabase
+  .from('ExerciseDemographics')
+  .select()
+  .eq('UserId', `${user?.id}` );
+  
+  const {data : workoutList } = await supabase.from('Workouts').select();
+
+
+  const { data : userData, error } = await supabase
+  .from('Users')
+  .select()
+  .eq('Id', `${user?.id}`)
+
+  
+
+  console.log(userData)
 
   return (
-    <div>
-      <h1 className='mb-4'>Create a Workout</h1>
-    <WorkoutList workouts={data ?? []}/>
+    <div className='flex flex-col items-center space-y-4 p-4'>
+      <WorkoutButton buttonName="Start Workout" href='/workouts/add-workout'/>
+      <WorkoutButton buttonName="Plan Workout" href='/workouts/add-workout'/>
+      <WorkoutButton buttonName="View Workouts" href='/workouts/prev-workouts'/>
     </div>
   );
 }
+{/* <MyWorkoutList workouts={workoutList ?? []} /> */}
+    {/* <ExerciseList exercises={exerciseList ?? []}/> */}

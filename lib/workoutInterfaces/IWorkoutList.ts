@@ -1,6 +1,9 @@
 export interface IWorkoutList {
     workouts: {
-        Id: string | number;
+        Id: string;
         Name: string;
+        Date: string;
+        UserId : string;
+        IsShared : boolean;
     }[];
 }
