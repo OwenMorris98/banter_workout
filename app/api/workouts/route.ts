@@ -1,22 +1,33 @@
+import { CreateWorkoutProps } from '@/lib/excerciseInterfaces/IExerciseList';
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
+interface CreateWorkoutRequest {
+    workoutName : string,
+    exercises: {
+        Id: string | number;
+        Name: string;
+    }[]
+}
+
 export async function POST(request: Request) {
     try {
         const supabase = await createClient();
-        const body = await request.json();
+        const { data: { user } } = await supabase.auth.getUser()
+        const body = await request.json() as CreateWorkoutRequest;
         console.log(body);
         
-        const { workouts } = body
-
         
-
-
-
+        const workouts = body.exercises.map(exercise => ({
+            WorkoutName: body.workoutName,
+            ExerciseName: exercise.Name,
+            UserId: user?.id
+        }));
+        
         // Insert workouts into the database
         const { data, error } = await supabase
-            .from('workouts')
+            .from('WorkoutExercises')
             .insert(workouts)
             .select()
 

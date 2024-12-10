@@ -1,12 +1,13 @@
 'use client'
 import { useState, useEffect } from 'react';
-import { IExerciseList } from '@/lib/excerciseInterfaces/IExerciseList';
+import { CreateWorkoutProps } from '@/lib/excerciseInterfaces/IExerciseList';
 import { SubmitButton } from '../submit-button';
 
-export default function ExerciseList({ exercises }: IExerciseList) {
+export default function ExerciseList({ exercises, workoutName }: CreateWorkoutProps) {
     const [searchTerm, setSearchTerm] = useState('');
     const [mounted, setMounted] = useState(false);
     const [selectedExercises, setSelectedExercises] = useState<any[]>([]);
+    const [successFlag, setSuccessFlag] = useState(false);
 
     // Wait for client-side hydration to complete
     useEffect(() => {
@@ -40,23 +41,27 @@ export default function ExerciseList({ exercises }: IExerciseList) {
 
     const saveExercise = async () => {
         try {
-            const response = await fetch('/api/exercises', {
+            const response = await fetch('/api/workouts', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    workoutName : workoutName,
                     exercises: selectedExercises
                 }),
+                
             });
-
+            console.log(response);
             if (!response.ok) {
                 throw new Error('Failed to save exercise');
-            }
-
-            const data = await response.json();
+            } 
             // Handle successful save (e.g., show success message)
-            
+        if (response.status === 201) {
+            setSuccessFlag(true);
+            // Close the workout list or navigate away
+        }
+
         } catch (error) {
             console.error('Error saving exercise:', error);
             // Handle error (e.g., show error message)
@@ -65,6 +70,8 @@ export default function ExerciseList({ exercises }: IExerciseList) {
 
     return (
         <div>
+            {successFlag && (
+                <>
             <h1 className='mb-4'>Create a Workout</h1>
             <div className='flex flex-row lg:w-100'>
             {/* Search side*/}
@@ -117,7 +124,10 @@ export default function ExerciseList({ exercises }: IExerciseList) {
                     </div>
                 </div>
             </div>
-            <SubmitButton className=''  onClick={saveExercise}>Submit</SubmitButton>
+            <SubmitButton onClick={saveExercise}>Submit</SubmitButton>
+            </>
+        ) }
+                    {successFlag && <span>Workout Created!</span>}
         </div>
     );
 }

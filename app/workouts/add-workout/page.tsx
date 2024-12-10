@@ -9,9 +9,7 @@ export default async function Page() {
     const { data: exerciseList, error : exercisListError } = await supabase
     .from('ExerciseDemographics')
     .select();
-    // .eq('UserId', `${user?.id}` );
-    
-  
+
     return(
        <NameWorkout exercises={exerciseList ?? []}/>
         

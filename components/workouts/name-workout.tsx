@@ -36,7 +36,7 @@ export default function NameWorkout({ exercises }: IExerciseList) {
                     <SubmitButton onClick={saveName}>Change</SubmitButton>
                     </div>
                     <div>
-                    <ExerciseList exercises={exercises ?? []}/>
+                    <ExerciseList exercises={exercises ?? []} workoutName={workoutName}/>
                     </div>
                 </div>
                 )}
