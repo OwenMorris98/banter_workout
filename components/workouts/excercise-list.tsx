@@ -124,9 +124,9 @@ export default function ExerciseList({ exercises, workoutName }: CreateWorkoutPr
                     </div>
                 </div>
             </div>
-            <SubmitButton onClick={saveExercise}>Submit</SubmitButton>
+            <SubmitButton className='mt-4' onClick={saveExercise}>Submit</SubmitButton>
             </>
-        )};
+        )}
                     {successFlag && <span>Workout Created!</span>}
         </div>
     );
