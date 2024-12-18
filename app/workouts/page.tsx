@@ -31,7 +31,7 @@ export default async function Page() {
     <div className='flex flex-col items-center space-y-4 p-4'>
       <WorkoutButton buttonName="Start Workout" href='/workouts/start-workout'/>
       <WorkoutButton buttonName="Plan Workout" href='/workouts/add-workout'/>
-      <WorkoutButton buttonName="View Workouts" href='/workouts/prev-workouts'/>
+      <WorkoutButton buttonName="View Workouts" href='/workouts/my-workouts'/>
     </div>
   );
 }
