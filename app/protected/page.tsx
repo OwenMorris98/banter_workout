@@ -25,7 +25,7 @@ export default async function ProtectedPage() {
   }
 
 
-  if(!UserInfo.username) {
+  if(!UserInfo.Username) {
     return(
       <CreateUsername UserId={user?.id}/>
     )
