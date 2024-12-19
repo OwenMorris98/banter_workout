@@ -4,6 +4,7 @@ import WorkoutButton from '@/components/workouts/workout-button';
 import MyWorkoutList from '@/components/workouts/workout-list';
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 export default async function Page() {
   const supabase = await createClient()
@@ -42,6 +43,7 @@ export default async function Page() {
       <WorkoutButton buttonName="Start Workout" href='/workouts/start-workout'/>
       <WorkoutButton buttonName="Plan Workout" href='/workouts/add-workout'/>
       <WorkoutButton buttonName="View Workouts" href='/workouts/my-workouts'/>
+      <Link href={'/workouts/add-exercise'}>Add Exercise...</Link>
     </div>
   );
 }
