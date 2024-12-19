@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import ExerciseList from '@/components/workouts/excercise-list';
 import WorkoutButton from '@/components/workouts/workout-button';
 import MyWorkoutList from '@/components/workouts/workout-list';
@@ -29,6 +30,15 @@ export default async function Page() {
 
   return (
     <div className='flex flex-col items-center space-y-4 p-4'>
+      <h1 className="text-2xl text-decoration-line: underline underline-offset-4 mb-2">
+      Banter Workout
+      </h1>
+      <Image
+        src="/img/horse_bant.jpg"
+        alt="Banter Workout Logo"
+        width={200}
+        height={100}
+      />
       <WorkoutButton buttonName="Start Workout" href='/workouts/start-workout'/>
       <WorkoutButton buttonName="Plan Workout" href='/workouts/add-workout'/>
       <WorkoutButton buttonName="View Workouts" href='/workouts/my-workouts'/>
