@@ -31,15 +31,18 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
     try {
+        console.log('made it to server')
         const supabase = await createClient();
         const body = await request.json()
-        const { Id, Username } = body
+        const { Id, DisplayName } = body
+
+        console.log(body);
 
         // Update workout in the database
         const { data, error } = await supabase
-            .from('users')
-            .update('Username',Username)
-            .eq('id', Id)
+            .from('Users')
+            .update({ Username : DisplayName})
+            .eq('Id', Id)
             .select()
 
         if (error) throw error

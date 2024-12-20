@@ -18,14 +18,18 @@ export default async function ProtectedPage() {
   
   const {
     data: UserInfo, error
-  } = await supabase.from('Users').select().eq('Id', `${user.id}`).single()
+  } = await supabase.from('Users')
+  .select()
+  .eq('Id', user.id)
+  .single()
+  console.log(UserInfo)
 
   if(error) {
     console.error('Error fetching user: ', error)
   }
 
 
-  if(!UserInfo.username) {
+  if(!UserInfo.Username) {
     return(
       <CreateUsername UserId={user?.id}/>
     )
