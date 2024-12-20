@@ -16,8 +16,8 @@ export default function WorkoutButton({ buttonName, href} : WorkoutButtonProps) 
     <button 
       className="w-full max-w-md bg-gray-800 hover:bg-gray-700 text-white 
       font-semibold py-3 px-6 border-2 border-black 
-      rounded-lg shadow-lg transition duration-200">
-        <a href={href} onTouchStart={handleTouch}>{buttonName}</a>
+      rounded-lg shadow-lg transition duration-200" onClick={handleTouch}>
+      {buttonName}
     </button>
   );
 }
