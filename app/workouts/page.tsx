@@ -40,7 +40,7 @@ export default async function Page() {
         width={200}
         height={100}
       />
-      <WorkoutButton buttonName="Start Workout" href='/workouts/start-workout'/>
+      <WorkoutButton buttonName="Start Workout" href='/workouts/start-workout' />
       <WorkoutButton buttonName="Plan Workout" href='/workouts/add-workout'/>
       <WorkoutButton buttonName="View Workouts" href='/workouts/my-workouts'/>
       <Link href={'/workouts/add-exercise'}>Add Exercise...</Link>
