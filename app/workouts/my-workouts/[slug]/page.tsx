@@ -1,5 +1,6 @@
 import DisplayExercise from "@/components/workouts/display-exercise";
 import { createClient } from "@/utils/supabase/server";
+import { checkUserAuth } from "@/utils/users/check-user";
 import { group } from "console";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -10,15 +11,9 @@ export default async function Page({
     params: Promise<{ slug: string }>
   }) {
     const slug = (await params).slug
+    await checkUserAuth();
+    
     const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-  
-    if (!user) {
-      return redirect("/sign-in");
-    }
-
     const {
         data : workoutData,
         error : workoutError

@@ -1,16 +1,11 @@
 import { createClient } from "@/utils/supabase/server";
+import { checkUserAuth } from "@/utils/users/check-user";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
+    const user = await checkUserAuth();
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-  
-    if(!user) {
-      return redirect("/sign-in");
-    }
-    console.log(user.id)
-
     const { data : workoutList , error : error } = await supabase
     .from('Workouts')
     .select()

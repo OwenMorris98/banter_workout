@@ -2,6 +2,7 @@ import EndWorkoutButton from "@/components/workouts/end-workout";
 import Exercise from "@/components/workouts/exercise";
 import { IWorkout } from "@/lib/workoutInterfaces/IWorkout";
 import { createClient } from "@/utils/supabase/server";
+import { checkUserAuth } from "@/utils/users/check-user";
 import { redirect } from "next/navigation";
 
 
@@ -11,15 +12,8 @@ export default async function Page({
     params: Promise<{ slug: string }>
   }) {
     const slug = (await params).slug
+    const user = await checkUserAuth();
     const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-  
-    if (!user) {
-      return redirect("/sign-in");
-    }
-    
     const { data, error } = await supabase
         .from("Workouts")
         .select("Id, Name, Date, UserId, IsShared, Exercises(Id, Name, Sets, Reps, Weight, WorkoutId)")

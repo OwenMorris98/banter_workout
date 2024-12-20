@@ -5,28 +5,10 @@ import MyWorkoutList from '@/components/workouts/workout-list';
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { checkUserAuth } from '@/utils/users/check-user';
 
 export default async function Page() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if(!user) {
-    return redirect("/sign-in");
-  }
-  
-  // const { data: exerciseList, error : exercisListError } = await supabase
-  // .from('ExerciseDemographics')
-  // .select()
-  // .eq('UserId', `${user?.id}` );
-  
-  // const {data : workoutList } = await supabase.from('Workouts').select();
-
-
-  // const { data : userData, error } = await supabase
-  // .from('Users')
-  // .select()
-  // .eq('Id', `${user?.id}`)
-
+  const user = await checkUserAuth();
   
 
   return (
