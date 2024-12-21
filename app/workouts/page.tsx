@@ -5,10 +5,10 @@ import MyWorkoutList from '@/components/workouts/workout-list';
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { checkUserAuth } from '@/utils/users/check-user';
+import { checkUserAuth } from '@/services/users/check-user';
 
 export default async function Page() {
-  const user = await checkUserAuth();
+  await checkUserAuth();
   
 
   return (

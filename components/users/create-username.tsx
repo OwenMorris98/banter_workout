@@ -10,8 +10,6 @@ export default function CreateUsername({ UserId }: CreateUsernameProps) {
     const [userName, setUsername] = useState('');
     const [updateSuccess, setUpdateSuccess] = useState<boolean>(false);
 
-    
-
     const handleSubmit = async () => {    
         try {
             const response = await fetch('/api/users', {
@@ -33,14 +31,11 @@ export default function CreateUsername({ UserId }: CreateUsernameProps) {
                 console.log('response.ok')
                 setUpdateSuccess(true);
                 router.push('/workouts');
-
+                // Ensure the form is not shown again after successful submission
+                return;
             }
-            // Handle successful save (e.g., show success message)
-            
-            
         } catch (error) {
             console.error('Error saving exercise:', error);
-            // Handle error (e.g., show error message)
         }
     };
 

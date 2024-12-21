@@ -1,8 +1,9 @@
 import EndWorkoutButton from "@/components/workouts/end-workout";
 import Exercise from "@/components/workouts/exercise";
 import { IWorkout } from "@/lib/workoutInterfaces/IWorkout";
+import { fetchWorkoutById, fetchWorkoutExercises, fetchWorkoutExercisesByName } from "@/services/workouts/workout-store";
 import { createClient } from "@/utils/supabase/server";
-import { checkUserAuth } from "@/utils/users/check-user";
+import { checkUserAuth } from "@/services/users/check-user";
 import { redirect } from "next/navigation";
 
 
@@ -13,12 +14,7 @@ export default async function Page({
   }) {
     const slug = (await params).slug
     const user = await checkUserAuth();
-    const supabase = await createClient();
-    const { data, error } = await supabase
-        .from("Workouts")
-        .select("Id, Name, Date, UserId, IsShared, Exercises(Id, Name, Sets, Reps, Weight, WorkoutId)")
-        .eq("Id", slug)
-        .single();
+    const data = await fetchWorkoutById(slug);
 
     if (!data) {
       return <div>Workout not found</div>;
@@ -27,19 +23,8 @@ export default async function Page({
     const workout: IWorkout = data;
     console.log("Workout:", workout)
 
-    const { data: exerciseData, error: exerciseError } = await supabase
-      .from("WorkoutExercises")
-      .select("ExerciseName")
-      .eq("UserId", user.id)
-      .eq("WorkoutName", workout.Name)
-      .neq("WorkoutName", null);
+    const exerciseData = await fetchWorkoutExercisesByName(user.id, workout)
 
-    
-
-    if (exerciseError) {
-      console.error("Error fetching workout:", exerciseError);
-      return;
-    }
 
     if (!exerciseData || exerciseData.length === 0) {
       return <div>No Exercises</div>;

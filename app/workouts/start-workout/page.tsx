@@ -1,8 +1,8 @@
 
 import WorkoutPlanDDL from "@/components/workouts/workout-plan-ddl";
 import WorkoutScheme from "@/components/workouts/workout-scheme";
-import { createClient } from "@/utils/supabase/server";
-import { checkUserAuth } from "@/utils/users/check-user";
+import { checkUserAuth } from "@/services/users/check-user";
+import { fetchWorkoutExercises, fetchWorkoutNames } from "@/services/workouts/workout-store";
 import Link from "next/link";
 export default async function Page(props: {
   searchParams?: Promise<{
@@ -13,12 +13,7 @@ export default async function Page(props: {
   const searchParams = await props.searchParams;
   const query = searchParams?.query || "";
 
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("WorkoutExercises")
-    .select("ExerciseName, WorkoutName")
-    .eq("UserId", user.id)
-    .neq("WorkoutName", null);
+  const data = await fetchWorkoutExercises(user.id);
 
     if(!data || data.length === 0) {
       return(
@@ -29,8 +24,7 @@ export default async function Page(props: {
       )
     }
 
-  const workoutNames =
-    Array.from(new Set(data?.map((item) => item.WorkoutName))) ?? [];
+  const workoutNames = await fetchWorkoutNames(user.id);
 
   const filteredWorkouts =
     data?.filter((item) => item.WorkoutName === query) ?? [];
@@ -51,3 +45,4 @@ export default async function Page(props: {
     </div>
   );
 }
+

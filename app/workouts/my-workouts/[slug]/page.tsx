@@ -1,9 +1,7 @@
 import DisplayExercise from "@/components/workouts/display-exercise";
-import { createClient } from "@/utils/supabase/server";
-import { checkUserAuth } from "@/utils/users/check-user";
-import { group } from "console";
+import { fetchMyWorkoutById } from "@/services/workouts/workout-store";
+import { checkUserAuth } from "@/services/users/check-user";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 export default async function Page({
     params,
@@ -13,24 +11,7 @@ export default async function Page({
     const slug = (await params).slug
     await checkUserAuth();
     
-    const supabase = await createClient();
-    const {
-        data : workoutData,
-        error : workoutError
-    } = await supabase
-    .from('Workouts')
-    .select()
-    .eq('Id', slug)
-    .single()
-
-    const {
-        data : exerciseData,
-        error : exerciseError
-    } = await supabase
-    .from('Exercises')
-    .select()
-    .eq('WorkoutId', slug)
-    
+    const { exerciseData, workoutData } = await fetchMyWorkoutById(slug);
   
    
 

@@ -1,19 +1,12 @@
+import { fetchMyWorkouts } from "@/services/workouts/workout-store";
 import { createClient } from "@/utils/supabase/server";
-import { checkUserAuth } from "@/utils/users/check-user";
+import { checkUserAuth } from "@/services/users/check-user";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 export default async function Page() {
     const user = await checkUserAuth();
-    const supabase = await createClient()
-    const { data : workoutList , error : error } = await supabase
-    .from('Workouts')
-    .select()
-    .eq('UserId', user.id)
-    .order('Date', {ascending : false});
-
-   
-
+    const workoutList = await fetchMyWorkouts(user.id);
+    
     if(!workoutList || workoutList.length === 0) {
         return(<div>
             <span>No Workouts Found...</span>
