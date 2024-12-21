@@ -1,7 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
 
-
-
 /**
  * Fetches exercises for a given user's workouts.
  * 
