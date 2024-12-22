@@ -94,11 +94,12 @@ export const fetchWorkoutExercisesByName = async (
  * @returns {Array} An array of workout objects associated with the specified user.
  * @throws {Error} Throws an error if the database query fails.
  */
+
 export const fetchMyWorkouts = async (userId : string) => {
   const supabase = await createClient()
   const { data, error  } = await supabase
   .from('Workouts')
-  .select()
+  .select('')
   .eq('UserId', userId)
   .order('Date', {ascending : false});
 

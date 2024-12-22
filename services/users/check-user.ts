@@ -10,3 +10,12 @@ export async function checkUserAuth() {
   }
   return user;
 }
+
+export const fetchUsername = async (userId : string) => {
+  const supabase = await createClient();
+  const {data, error} = await supabase.from('Users').select("Username").eq('Id', userId).single();
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data;
+}
