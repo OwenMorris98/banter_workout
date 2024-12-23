@@ -2,12 +2,14 @@ import { fetchMyWorkouts } from "@/services/workouts/workout-store";
 import { createClient } from "@/utils/supabase/server";
 import { checkUserAuth, fetchUsername } from "@/services/users/check-user";
 import Link from "next/link";
+import { Workouts } from "@/utils/supabase/database.types";
 
 export default async function Page({ searchParams }: { searchParams?: Promise<{ user?: string }> }) {
     const slug = await searchParams?.then(params => params?.user);
     const user = await checkUserAuth();
+
     let username = null;
-    let workoutList;
+    let workoutList : Workouts;
     if (slug) {
         workoutList = await fetchMyWorkouts(slug);
         username = (await fetchUsername(slug)).Username;

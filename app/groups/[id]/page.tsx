@@ -1,4 +1,4 @@
-import { GroupUsersResponse } from "@/lib/groupsInterfaces";
+import { GroupUsersResponse } from "@/lib/groupInterfaces/groupsInterfaces";
 import { fetchGroupUsers } from "@/services/groups/group-store";
 import Link from "next/link";
 

@@ -1,16 +1,21 @@
 import SupabaseLogo from "@/components/supabase-logo";
 import { createClient } from "@/utils/supabase/server";
-import { GroupUsersResponse } from "@/lib/groupsInterfaces";
+import { GroupUsersResponse } from "@/lib/groupInterfaces/groupsInterfaces";
+import { Groups, GroupWithUser } from "@/utils/supabase/database.types";
+import { UUID } from "crypto";
 
-export const fetchGroupList = async () => {
+export const fetchGroupList = async (Id : string) : Promise<GroupWithUser> => {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("Groups")
-      .select();
+      .select('*, GroupUser (MembersId)')
+      .neq("GroupUser.MembersId", Id);
     if (error) {
       throw new Error(error.message);
     }
-    return data;
+    console.log(data);
+
+    return data as GroupWithUser;
   };
 
   export const fetchGroupUsers = async (groupId: string) => {
