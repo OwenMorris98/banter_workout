@@ -24,5 +24,8 @@ export type GroupUser = {
 
 export type GroupWithUser = {
     Group : Group;
-    MembersId : string;
+    GroupUser : {
+        MembersId : string[];
+    }[];
+    
 }

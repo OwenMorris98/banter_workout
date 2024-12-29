@@ -18,4 +18,14 @@ interface Workout {
   
   export type GroupUsersResponse = GroupUser[];
   
+  export interface GroupWithUser {
+    Group: {
+        Id: string;
+        Name: string;
+        Description : string;
+        CreatorId : string;
+    };
+    MembersId: string[]; 
+  }
+  
   

@@ -1,12 +1,45 @@
 'use client'
-import { Group, Groups } from "@/utils/supabase/database.types";
+import { Group, Groups, GroupWithUser } from "@/utils/supabase/database.types";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import { User } from "@supabase/supabase-js";
+import { group } from "console";
 
 
-export default function GroupList({groups} : {groups: Groups}) {
+export default function GroupList({groups, user, open} : {groups: GroupWit hUser[], user: User, open : boolean }) {
     const router = useRouter();
+
+    let groupList: Groups = [];
+    console.log(groups);
+    if(groups && open) {
+      console.log('filtered groups: ', groups.filter((group) => group.GroupUser.MembersId?.includes(user.id)));
+      groupList = groups.filter((group) => group.MembersId?.includes(user.id)).map((filteredGroup) => ({
+        Id: filteredGroup.Group?.Id,
+        Name: filteredGroup.Group?.Name,
+        Description: filteredGroup.Group?.Description,
+        CreatorId: filteredGroup.Group?.CreatorId,
+      }));
+      console.log("My Groups ", groupList)
+      if(groupList.length === 1 && !groupList[0].Id) {
+        groupList = [];
+      }
+     
+    }
+    else  {
+      console.log('groups :', groups )
+      groupList = groups.filter((group) => !group.MembersId?.includes(user.id)).map((filteredGroup) => ({
+        Id: filteredGroup.Group?.Id,
+        Name: filteredGroup.Group?.Name,
+        Description: filteredGroup.Group?.Description,
+        CreatorId: filteredGroup.Group?.CreatorId,
+      }));
+      console.log("Open Groups ", groupList)
+      if(groupList.length === 1 && !groupList[0].Id) {
+        groupList = [];
+      }
+    }
+    
 
     const joinGroup = async (group: Group) => {
         const requestBody = {
@@ -25,7 +58,15 @@ export default function GroupList({groups} : {groups: Groups}) {
     };
 
     return (
+      
         <div className="overflow-x-auto">
+          {groupList.length == 0 &&
+            <div className="ml-2">
+          <span>There are no groups to join right now... :(</span>
+    <br />
+    <span>Try creating one!</span>
+    </div>}
+    {groupList.length > 0 &&
         <div className="min-w-full bg-black-800 shadow-md rounded my-6">
           <table className="min-w-full leading-normal">
             <thead>
@@ -42,13 +83,13 @@ export default function GroupList({groups} : {groups: Groups}) {
               </tr>
             </thead>
             <tbody> 
-              {groups?.map((group) => (
+              {groupList?.map((group) => (
                 <tr key={group?.Id}>
                   <td className="px-5 py-5 border-b border-black-600 bg-black-800 text-sm">
                     {group.Name}
                   </td>
                   <td className="px-5 py-5 border-b border-black-600 bg-black-800 text-sm">
-                    {group.Description.length > 50
+                    {group.Description?.length > 50
                       ? `${group.Description.substring(0, 50)}...`
                       : group.Description}
                   </td>
@@ -70,6 +111,7 @@ export default function GroupList({groups} : {groups: Groups}) {
             </tbody>
           </table>
         </div>
+}
       </div>
     )
 }

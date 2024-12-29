@@ -4,19 +4,19 @@ import { GroupUsersResponse } from "@/lib/groupInterfaces/groupsInterfaces";
 import { Groups, GroupWithUser } from "@/utils/supabase/database.types";
 import { UUID } from "crypto";
 
-export const fetchGroupList = async (Id : string) : Promise<GroupWithUser> => {
+export const fetchGroupList = async (Id: string): Promise<GroupWithUser[]> => {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from("Groups")
-      .select('*, GroupUser (MembersId)')
-      .neq("GroupUser.MembersId", Id);
+        .from("Groups")
+        .select('*, GroupUser (MembersId)')
+        .neq("GroupUser.MembersId", Id);
+
     if (error) {
       throw new Error(error.message);
     }
-    console.log(data);
 
-    return data as GroupWithUser;
-  };
+    return data as GroupWithUser[]; 
+};
 
   export const fetchGroupUsers = async (groupId: string) => {
     const supabase = await createClient();
