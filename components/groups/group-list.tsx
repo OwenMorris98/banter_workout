@@ -7,7 +7,7 @@ import { User } from "@supabase/supabase-js";
 import { group } from "console";
 
 
-export default function GroupList({groups, user, open} : {groups: GroupWit hUser[], user: User, open : boolean }) {
+export default function GroupList({groups, user, open} : {groups: GroupWithUser[], user: User, open : boolean }) {
     const router = useRouter();
 
     let groupList: Groups = [];
