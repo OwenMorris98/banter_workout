@@ -1,43 +1,44 @@
 'use client'
 import { Group, Groups, GroupWithUser } from "@/utils/supabase/database.types";
-import Link from "next/link";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { User } from "@supabase/supabase-js";
-import { group } from "console";
 
 
 export default function GroupList({groups, user, open} : {groups: GroupWithUser[], user: User, open : boolean }) {
     const router = useRouter();
 
     let groupList: Groups = [];
-    console.log(groups);
     if(groups && open) {
-      console.log('filtered groups: ', groups.filter((group) => group.GroupUser.MembersId?.includes(user.id)));
-      groupList = groups.filter((group) => group.MembersId?.includes(user.id)).map((filteredGroup) => ({
-        Id: filteredGroup.Group?.Id,
-        Name: filteredGroup.Group?.Name,
-        Description: filteredGroup.Group?.Description,
-        CreatorId: filteredGroup.Group?.CreatorId,
+      const filteredGroups = groups
+      .filter((group) => group.GroupUser.filter((member) => member.MembersId !== user.id));
+      
+    console.log('Filtered Open Groups: ', filteredGroups);
+     groupList = filteredGroups
+      .map((group) => ({
+        Id: group.Id,
+        Name: group.Name,
+        Description: group.Description,
+        CreatorId: group.CreatorId,
       }));
-      console.log("My Groups ", groupList)
-      if(groupList.length === 1 && !groupList[0].Id) {
-        groupList = [];
-      }
      
     }
     else  {
-      console.log('groups :', groups )
-      groupList = groups.filter((group) => !group.MembersId?.includes(user.id)).map((filteredGroup) => ({
-        Id: filteredGroup.Group?.Id,
-        Name: filteredGroup.Group?.Name,
-        Description: filteredGroup.Group?.Description,
-        CreatorId: filteredGroup.Group?.CreatorId,
+
+      const filteredGroups = groups.filter((group) => group.GroupUser.filter((member) => member.MembersId === user.id));
+
+      groupList = filteredGroups
+      .map((group) => ({
+        Id: group.Id,
+        Name: group.Name,
+        Description: group.Description,
+        CreatorId: group.CreatorId,
       }));
-      console.log("Open Groups ", groupList)
-      if(groupList.length === 1 && !groupList[0].Id) {
-        groupList = [];
-      }
+      console.log("Closed Groups ", groupList)
+      
+    }
+    if(groupList.length === 1 && !groupList[0].Id) {
+      groupList = [];
     }
     
 
@@ -94,17 +95,21 @@ export default function GroupList({groups, user, open} : {groups: GroupWithUser[
                       : group.Description}
                   </td>
                   <td className="px-1 py-5 border-b border-black-600 bg-black-800 text-sm">
-                    <div className="flex justify-between">
-                    {/* <Link className="border border-input bg-background py-3 px-4 hover:bg-accent hover:text-accent-foreground" href={`/groups/${group.Id}`}>
-                      View
-                    </Link> */}
-                    <Button variant={"outline"} className="py-5" onClick={() => router.push(`/groups/${group.Id}`)}>
-                      View
-                    </Button>
-                    <Button variant={"outline"} className="py-5" onClick={() => joinGroup(group)}>
-                      Join
-                    </Button>
-                    </div>
+                    {open ? (
+                     <div className="flex justify-between">
+                     <Button variant={"outline"} className="py-5" onClick={() => router.push(`/groups/${group.Id}`)}>
+                       View
+                     </Button>
+                     <Button variant={"outline"} className="py-5" onClick={() => joinGroup(group)}>
+                       Join
+                     </Button>
+                     </div>
+                    ) : (
+                      <Button variant={"outline"} className="py-5" onClick={() => router.push(`/groups/${group.Id}`)}>
+                       View
+                     </Button>
+                    )}
+                   
                   </td>
                 </tr>
               ))}

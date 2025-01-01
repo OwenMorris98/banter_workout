@@ -23,9 +23,12 @@ export type GroupUser = {
 };
 
 export type GroupWithUser = {
-    Group : Group;
+    Id : string;
+    Name : string;
+    Description : string;
+    CreatorId: string;
     GroupUser : {
-        MembersId : string[];
+        MembersId : string;
     }[];
     
 }
