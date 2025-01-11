@@ -8,8 +8,8 @@ export const fetchGroupList = async (Id: string): Promise<GroupWithUser[]> => {
     const supabase = await createClient();
     const { data, error } = await supabase
         .from("Groups")
-        .select('*, GroupUser (MembersId)')
-        .neq("GroupUser.MembersId", Id);
+        .select('*, GroupUser (MembersId)');
+        // .neq("GroupUser.MembersId", Id);
 
     if (error) {
       throw new Error(error.message);

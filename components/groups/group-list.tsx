@@ -7,20 +7,32 @@ import { User } from "@supabase/supabase-js";
 
 export default function GroupList({groups, user, open} : {groups: GroupWithUser[], user: User, open : boolean }) {
     const router = useRouter();
-
+    console.log(user.id);
     let groupList: Groups = [];
-    if(groups && open) {
-      const filteredGroups = groups
-      .filter((group) => group.GroupUser.filter((member) => member.MembersId !== user.id));
-      
-    console.log('Filtered Open Groups: ', filteredGroups);
-     groupList = filteredGroups
-      .map((group) => ({
-        Id: group.Id,
-        Name: group.Name,
-        Description: group.Description,
-        CreatorId: group.CreatorId,
-      }));
+    if(groups && open) {     
+      groups.forEach((group) => {
+        group.GroupUser.forEach((member) => {
+          // Logic to be filled in
+          if(member.MembersId === user.id) {
+            groups.splice(groups.indexOf(group), 1)
+          }
+          groupList = groups
+            .map((group) => ({
+              Id: group.Id,
+              Name: group.Name,
+              Description: group.Description,
+              CreatorId: group.CreatorId,
+            }));
+        });
+      });  
+    console.log('Filtered Open Groups: ', groupList);
+    //  groupList = filteredGroups
+    //   .map((group) => ({
+    //     Id: group.Id,
+    //     Name: group.Name,
+    //     Description: group.Description,
+    //     CreatorId: group.CreatorId,
+    //   }));
      
     }
     else  {
@@ -34,7 +46,7 @@ export default function GroupList({groups, user, open} : {groups: GroupWithUser[
         Description: group.Description,
         CreatorId: group.CreatorId,
       }));
-      console.log("Closed Groups ", groupList)
+     
       
     }
     if(groupList.length === 1 && !groupList[0].Id) {
