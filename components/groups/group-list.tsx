@@ -3,10 +3,12 @@ import { Group, Groups, GroupWithUser } from "@/utils/supabase/database.types";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { User } from "@supabase/supabase-js";
+import { getOpenGroups } from "@/services/groups/group-service";
 
 
 export default function GroupList({groups, user, open} : {groups: GroupWithUser[], user: User, open : boolean }) {
     const router = useRouter();
+    //const groupList = getOpenGroups( {groups, user, open);
     console.log(user.id);
     let groupList: Groups = [];
     if(groups && open) {     

@@ -3,8 +3,9 @@ import { Group, Groups, GroupWithUser } from "@/utils/supabase/database.types";
 import { User } from "@supabase/supabase-js";
 
 export const getOpenGroups = ({groups, user, open} : {groups: GroupWithUser[], user: User, open : boolean }) => {
+  let groupList: Groups = [];
     if(groups && open) {
-        let groupList: Groups = [];
+       
         if(groups && open) {     
           groups.forEach((group) => {
             group.GroupUser.forEach((member) => {
@@ -22,6 +23,7 @@ export const getOpenGroups = ({groups, user, open} : {groups: GroupWithUser[], u
             });
           }); 
        
+          
       }
       else  {
     
@@ -40,23 +42,10 @@ export const getOpenGroups = ({groups, user, open} : {groups: GroupWithUser[], u
       if(groupList.length === 1 && !groupList[0].Id) {
         groupList = [];
       }
+      return groupList;
       
     
-      const joinGroup = async (group: Group) => {
-          const requestBody = {
-              GroupsId : group.Id
-          }
-          const response = await fetch('/api/groups/group-users', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(requestBody)
-          });
-          if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-          }
-      };
+    }
 }
 
 
