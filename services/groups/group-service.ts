@@ -2,7 +2,7 @@
 import { Group, Groups, GroupWithUser } from "@/utils/supabase/database.types";
 import { User } from "@supabase/supabase-js";
 
-export const getOpenGroups = ({groups, user, open} : {groups: GroupWithUser[], user: User, open : boolean }) => {
+export const getOpenGroups = (groups: GroupWithUser[], user: User, open : boolean) => {
   let groupList: Groups = [];
     if(groups && open) {
        
@@ -22,8 +22,6 @@ export const getOpenGroups = ({groups, user, open} : {groups: GroupWithUser[], u
                 }));
             });
           }); 
-       
-          
       }
       else  {
     
