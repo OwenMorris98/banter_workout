@@ -4,9 +4,7 @@ import { User } from "@supabase/supabase-js";
 
 export const getOpenGroups = (groups: GroupWithUser[], user: User, open : boolean) => {
   let groupList: Groups = [];
-    if(groups && open) {
-       
-        if(groups && open) {     
+        if(open) {     
           groups.forEach((group) => {
             group.GroupUser.forEach((member) => {
               // Logic to be filled in
@@ -24,17 +22,21 @@ export const getOpenGroups = (groups: GroupWithUser[], user: User, open : boolea
           }); 
       }
       else  {
-    
-        const filteredGroups = groups.filter((group) => group.GroupUser.filter((member) => member.MembersId === user.id));
-    
-        groupList = filteredGroups
-        .map((group) => ({
-          Id: group.Id,
-          Name: group.Name,
-          Description: group.Description,
-          CreatorId: group.CreatorId,
-        }));
-       
+          groups.forEach((group) => {
+            group.GroupUser.forEach((member) => {
+              // Logic to be filled in
+              if(member.MembersId !== user.id) {
+                groups.splice(groups.indexOf(group), 1)
+              }
+              groupList = groups
+                .map((group) => ({
+                  Id: group.Id,
+                  Name: group.Name,
+                  Description: group.Description,
+                  CreatorId: group.CreatorId,
+                }));
+            });
+          });
         
       }
       if(groupList.length === 1 && !groupList[0].Id) {
@@ -44,7 +46,7 @@ export const getOpenGroups = (groups: GroupWithUser[], user: User, open : boolea
       
     
     }
-}
+
 
 
 

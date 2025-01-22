@@ -10,16 +10,11 @@ import { useEffect, useState } from "react";
 export default function GroupList({groups, user, open} : {groups: GroupWithUser[], user: User, open : boolean }) {
     const router = useRouter();
     const [Groups, setGroups] = useState<Group[]>([]);
-    
-    
-    const [joined, setJoined] = useState<boolean>(false);
-    console.log(user.id);
-    
-    console.log('Filtered Open Groups: ', Groups);
    
     useEffect(() => {
+      console.log(groups)
       setGroups(getOpenGroups(groups, user, open) || []);
-    },[]);
+    },[groups]);
     
 
     const joinGroup = async (group: Group) => {
@@ -84,7 +79,7 @@ export default function GroupList({groups, user, open} : {groups: GroupWithUser[
                      <Button variant={"outline"} className="py-5" onClick={async () => {
                        await joinGroup(group);
                      }}>
-                       {joined ? 'View' : 'Join'}
+                       Join
                      </Button>
                      </div>
                     ) : (
