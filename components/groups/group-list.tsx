@@ -10,11 +10,13 @@ import { useEffect, useState } from "react";
 export default function GroupList({groups, user, open} : {groups: GroupWithUser[], user: User, open : boolean }) {
     const router = useRouter();
     const [Groups, setGroups] = useState<Group[]>([]);
-   
+
     useEffect(() => {
-      console.log(groups)
-      setGroups(getOpenGroups(groups, user, open) || []);
-    },[groups]);
+      console.log('Effect running with:', { groups, user, open });
+      const openGroups = getOpenGroups(groups, user, open) || [];
+
+      setGroups(openGroups);
+    }, [groups, user, open]);
     
 
     const joinGroup = async (group: Group) => {
@@ -35,15 +37,15 @@ export default function GroupList({groups, user, open} : {groups: GroupWithUser[
     };
 
     return (
-      
-        <div className="overflow-x-auto">
-          {Groups.length == 0 &&
-            <div className="ml-2">
-          <span>There are no groups to join right now... :(</span>
-    <br />
-    <span>Try creating one!</span>
-    </div>}
-    {Groups.length > 0 &&
+      <div className="overflow-x-auto">
+            {(!Groups || Groups.length === 0) && (
+                <div className="ml-2">
+                    <span>There are no groups to join right now... :(</span>
+                    <br />
+                    <span>Try creating one!</span>
+                </div>
+            )}  
+    {Groups && Groups.length > 0 &&
         <div className="min-w-full bg-black-800 shadow-md rounded my-6">
           <table className="min-w-full leading-normal">
             <thead>
