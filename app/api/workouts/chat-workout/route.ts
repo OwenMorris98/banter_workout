@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import { streamText } from 'ai';
+import workout_schema from '@/lib/chat-schemas/workout-schema';
  
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -21,6 +22,17 @@ export async function POST(req: Request) {
       },
       ...messages,
     ],
+    tools: [
+      {
+        "type": "function",
+        "function": {
+            "name": "generate_workout",
+            "description": "Generates a structured workout plan",
+            "parameters": workout_schema
+        }
+    }
+    ],
+    tool_choice: { type: "function", function: { name: "generate_workout" } } 
   });
 
   return new Response(JSON.stringify(response.choices[0].message), {
