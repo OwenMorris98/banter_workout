@@ -37,15 +37,23 @@ export async function POST(req: Request) {
   });
 
   const workoutResponse = response.choices[0].message;
+
+  // The error is because we're returning null, which isn't a valid return type for a Next.js API route
+  // We need to return a proper Response object instead
+  
+  // If there are no tool calls, return an empty response with an appropriate status code
   if(!workoutResponse.tool_calls) {
-    return null;
-  }
-  else  {
-    return new Response(workoutResponse.tool_calls[0].function.arguments
-    , {
+    return new Response(JSON.stringify({ error: "Failed to generate workout" }), {
+      status: 400,
       headers: { 'Content-Type': 'application/json' },
     });
   }
+  
+  // Return the workout response
+  return new Response(workoutResponse.tool_calls[0].function.arguments, {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  });
 
 
 }
