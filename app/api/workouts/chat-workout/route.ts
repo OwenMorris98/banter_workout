@@ -19,7 +19,7 @@ export async function POST(req: Request) {
       },
       {
         role: 'user',
-        content: 'I would like you to build a workout schedule for 3 days a week and consists of compound and isolation exercises and format it into a json object'
+        content: 'I would like you to build a workout schedule with multiple days of compound and isolation exercises and format it into a json object. If I do not input a certain number of days per week, then use a default of 3 days per week'
       },
       ...messages,
     ],
