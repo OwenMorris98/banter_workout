@@ -1,12 +1,13 @@
 import OpenAI from 'openai';
 import { streamText } from 'ai';
-import workout_schema from '@/lib/chat-schemas/workout-schema';
+import workoutSchema from '@/lib/chat-schemas/workout-schema';
  
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
  
 export async function POST(req: Request) {
+  console.log('Request: ' + req)
   const { messages } = await req.json();
 
   const response = await openai.chat.completions.create({
@@ -18,25 +19,34 @@ export async function POST(req: Request) {
       },
       {
         role: 'user',
-        content: 'I would like you to build a workout schedule for 3 days a week and consists of compound and isolation exercises'
+        content: 'I would like you to build a workout schedule for 3 days a week and consists of compound and isolation exercises and format it into a json object'
       },
       ...messages,
     ],
     tools: [
       {
-        "type": "function",
-        "function": {
-            "name": "generate_workout",
-            "description": "Generates a structured workout plan",
-            "parameters": workout_schema
+        type: "function",
+        function: {
+            name: "generate_workout",
+            description: "Generates a structured workout plan",
+            parameters: workoutSchema
         }
     }
     ],
     tool_choice: { type: "function", function: { name: "generate_workout" } } 
   });
 
-  return new Response(JSON.stringify(response.choices[0].message), {
-    headers: { 'Content-Type': 'application/json' },
-  });
+  const workoutResponse = response.choices[0].message;
+  if(!workoutResponse.tool_calls) {
+    return null;
+  }
+  else  {
+    return new Response(workoutResponse.tool_calls[0].function.arguments
+    , {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+
 }
 
