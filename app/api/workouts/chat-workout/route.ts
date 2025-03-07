@@ -15,11 +15,15 @@ export async function POST(req: Request) {
     messages: [
       {
         role: 'system',
-        content: 'You are a professional fitness trainer. Create workouts based on user requirements. Keep responses focused on exercise recommendations.',
+        content: 'You are a professional fitness trainer. Create workouts based on user requirements. Keep responses focused on exercise recommendations. Try defining you workouts as a split',
+      },
+      {
+        role : 'assistant',
+        content : 'There are many workout splits like Push-Pull-Legs (PPL), Upper-Lower Split, Full-Body Split, Body Part Split, 5-Day Split, 4-Day Split, 3-Day Split, 2-Day Split, Bro Split, 6-12-24 Split'
       },
       {
         role: 'user',
-        content: 'I would like you to build a workout schedule with multiple days of compound and isolation exercises and format it into a json object. If I do not input a certain number of days per week, then use a default of 3 days per week'
+        content: 'I would like you to build a workout schedule with exercises and format it into a json object. If I do not input a certain number of days per week, then use a default of 3 days per week'
       },
       ...messages,
     ],
