@@ -1,11 +1,22 @@
 import { fetchMyWorkouts } from "@/services/workouts/workout-store";
 import { createClient } from "@/utils/supabase/server";
-import { checkUserAuth } from "@/services/users/check-user";
+import { checkUserAuth, fetchUsername } from "@/services/users/check-user";
 import Link from "next/link";
+import { Workouts } from "@/utils/supabase/database.types";
 
-export default async function Page() {
+export default async function Page({ searchParams }: { searchParams?: Promise<{ user?: string }> }) {
+    const slug = await searchParams?.then(params => params?.user);
     const user = await checkUserAuth();
-    const workoutList = await fetchMyWorkouts(user.id);
+
+    let username = null;
+    let workoutList : Workouts;
+    if (slug) {
+        workoutList = await fetchMyWorkouts(slug);
+        username = (await fetchUsername(slug)).Username;
+        
+    } else {
+        workoutList = await fetchMyWorkouts(user.id);
+    }
     
     if(!workoutList || workoutList.length === 0) {
         return(<div>
@@ -15,7 +26,8 @@ export default async function Page() {
 
     return(
         <div className="w-96 px-4">
-            <h1 className="text-2xl text-decoration-line: underline underline-offset-4 mb-2">My Workouts</h1>
+            {username ? <h1 className="text-2xl text-decoration-line: underline underline-offset-4 mb-2">{username} Workouts</h1>
+             : <h1 className="text-2xl text-decoration-line: underline underline-offset-4 mb-2">My Workouts</h1>}
             <ul >
                 {workoutList.map((workout, index) => (
                     <li key={index}>
@@ -25,7 +37,7 @@ export default async function Page() {
                         </div>
                         <div className="border border-black flex py-4 px-2 justify-between ">
                             
-                            <p className="">{workout.Name} </p>
+                            <p className="">{workout?.Name} </p>
                             <Link href={`/workouts/my-workouts/${workout.Id}`}
                             className="text-decoration-line: underline underline-offset-4"
                             >

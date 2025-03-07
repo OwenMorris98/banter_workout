@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { SubmitButton } from "../submit-button";
-import SubmitItem from "../submit-item";
-import MyWorkoutList from "./workout-list";
 import { IExerciseList } from "@/lib/excerciseInterfaces/IExerciseList";
 import ExerciseList from "./excercise-list";
 

@@ -12,8 +12,6 @@ export default async function Page({
     await checkUserAuth();
     
     const { exerciseData, workoutData } = await fetchMyWorkoutById(slug);
-  
-   
 
     const groupedExercises: { [key: string]: { Reps: number; Weight: number }[] } = {};
 
@@ -25,10 +23,6 @@ exerciseData?.forEach((exercise) => {
     // Push the current workout's Reps and Weight into the array
     groupedExercises[exercise.Name].push({ Reps: exercise.Reps, Weight: exercise.Weight });
 });
-console.log(groupedExercises);
-
-    
-
     return(
     <div>
         <h1 className="text-2xl">{workoutData?.Name}</h1>

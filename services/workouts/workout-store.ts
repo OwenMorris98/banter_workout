@@ -1,6 +1,5 @@
+import { Workouts } from "@/utils/supabase/database.types";
 import { createClient } from "@/utils/supabase/server";
-
-
 
 /**
  * Fetches exercises for a given user's workouts.
@@ -96,18 +95,19 @@ export const fetchWorkoutExercisesByName = async (
  * @returns {Array} An array of workout objects associated with the specified user.
  * @throws {Error} Throws an error if the database query fails.
  */
-export const fetchMyWorkouts = async (userId : string) => {
-  const supabase = await createClient()
-  const { data, error  } = await supabase
-  .from('Workouts')
-  .select()
-  .eq('UserId', userId)
-  .order('Date', {ascending : false});
+
+export const fetchMyWorkouts = async (userId: string): Promise<Workouts> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('Workouts')
+    .select('Id, Name, Date, UserId, IsShared')
+    .eq('UserId', userId)
+    .order('Date', { ascending: false });
 
   if (error) {
     throw new Error(error.message);
   }
-  return data;
+  return data as Workouts;
 };
 
 /**

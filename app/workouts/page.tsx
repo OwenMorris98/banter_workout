@@ -26,6 +26,8 @@ export default async function Page() {
       <WorkoutButton buttonName="Plan Workout" href='/workouts/add-workout'/>
       <WorkoutButton buttonName="View Workouts" href='/workouts/my-workouts'/>
       <Link href={'/workouts/add-exercise'}>Add Exercise...</Link>
+      <Link href={'/groups'}>Join Group...</Link>
+      <Link href={'/groups/my-groups'}>My Groups...</Link>
     </div>
   );
 }
