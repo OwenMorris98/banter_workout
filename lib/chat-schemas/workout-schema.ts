@@ -13,6 +13,10 @@ const workoutSchema = {
               type: "string",
               description: "The day of the workout (e.g., Monday, Wednesday, Friday)"
             },
+            name: {
+              type: "string",
+              description: "The name of the workout for the day (e.g. Chest Day, Upper, Push etc...)"
+            },
             exercises: {
               type: "array",
               description: "List of exercises for the day",
@@ -37,9 +41,13 @@ const workoutSchema = {
                     type: "integer",
                     minimum: 1,
                     description: "Number of repetitions per set"
+                  },
+                  description : {
+                    type: "string",
+                    description: "Description of how to perform the workout, keep to one or two sentences"
                   }
                 },
-                required: ["name", "type", "sets", "repetitions"]
+                required: ["name", "type", "sets", "repetitions", "description"]
               }
             }
           },

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Button } from '../../ui/button';
 import { Input } from '../../ui/input';
+import { ExerciseInput } from './workout-card';
 
 interface Message {
   role: 'user' | 'assistant'; // Define the roles
@@ -13,10 +14,12 @@ interface Exercise {
   type: "compound" | "isolation";
   sets: number;
   repetitions: number;
+  description: string;
 }
 
 interface WorkoutDay {
   day: string;
+  name: string;
   exercises: Exercise[];
 }
 
@@ -56,85 +59,36 @@ export default function WorkoutChat() {
       <div className="flex flex-col space-y-2">
         {workoutPlan ? (
           <div className="border rounded-lg p-4">
-            <h2 className="text-xl font-bold mb-4">Workout Plan</h2>
+            <h2 className="text-xl font-bold underline mb-4">Workout Plan</h2>
             {workoutPlan?.schedule?.map((day, dayIndex) => (
               <div key={dayIndex} className="mb-6 border-b pb-4">
                 <div className="mb-2">
-                  <label className="block text-sm font-medium mb-1">Day:</label>
+                  <h3 className="text-xl font-bold mb-4">{day.day}</h3>               
+                </div>
+                <div className="mb-2">
+                <label className="block text-sm font-medium font-bold mb-1">Name: </label>
                   <Input 
-                    value={day.day} 
+                    value={day.name} 
                     onChange={(e) => {
                       const updatedPlan = {...workoutPlan};
-                      updatedPlan.schedule[dayIndex].day = e.target.value;
+                      updatedPlan.schedule[dayIndex].name = e.target.value;
                       setWorkoutPlan(updatedPlan);
                     }}
                     className="w-full"
+                    
                   />
-                </div>
-                
+                </div>              
                 <h3 className="font-semibold mt-3 mb-2">Exercises:</h3>
                 {day.exercises.map((exercise, exerciseIndex) => (
-                  <div key={exerciseIndex} className="border rounded p-3 mb-3">
-                    <div className="mb-2">
-                      <label className="block text-sm font-medium mb-1">Exercise Name:</label>
-                      <Input 
-                        value={exercise.name} 
-                        onChange={(e) => {
-                          const updatedPlan = {...workoutPlan};
-                          updatedPlan.schedule[dayIndex].exercises[exerciseIndex].name = e.target.value;
-                          setWorkoutPlan(updatedPlan);
-                        }}
-                        className="w-full"
-                      />
-                    </div>
-                    
-                    <div className="mb-2">
-                      <label className="block text-sm font-medium mb-1">Type:</label>
-                      <select 
-                        value={exercise.type}
-                        onChange={(e) => {
-                          const updatedPlan = {...workoutPlan};
-                          updatedPlan.schedule[dayIndex].exercises[exerciseIndex].type = 
-                            e.target.value as "compound" | "isolation";
-                          setWorkoutPlan(updatedPlan);
-                        }}
-                        className="w-full p-2 border rounded"
-                      >
-                        <option value="compound">Compound</option>
-                        <option value="isolation">Isolation</option>
-                      </select>
-                    </div>
-                    
-                    <div className="mb-2">
-                      <label className="block text-sm font-medium mb-1">Sets:</label>
-                      <Input 
-                        type="number"
-                        value={exercise.sets.toString()} 
-                        onChange={(e) => {
-                          const updatedPlan = {...workoutPlan};
-                          updatedPlan.schedule[dayIndex].exercises[exerciseIndex].sets = 
-                            parseInt(e.target.value) || 0;
-                          setWorkoutPlan(updatedPlan);
-                        }}
-                        className="w-full"
-                      />
-                    </div>
-                    
-                    <div className="mb-2">
-                      <label className="block text-sm font-medium mb-1">Repetitions:</label>
-                      <Input 
-                        type="number"
-                        value={exercise.repetitions.toString()} 
-                        onChange={(e) => {
-                          const updatedPlan = {...workoutPlan};
-                          updatedPlan.schedule[dayIndex].exercises[exerciseIndex].repetitions = 
-                            parseInt(e.target.value) || 0;
-                          setWorkoutPlan(updatedPlan);
-                        }}
-                        className="w-full"
-                      />
-                    </div>
-                  </div>
+                  <ExerciseInput
+                    key={exerciseIndex}
+                    exercise={exercise}
+                    onExerciseChange={(updatedExercise) => {
+                      const updatedPlan = {...workoutPlan};
+                      updatedPlan.schedule[dayIndex].exercises[exerciseIndex] = updatedExercise;
+                      setWorkoutPlan(updatedPlan);
+                    }}
+                  />
                 ))}
               </div>
             ))}
