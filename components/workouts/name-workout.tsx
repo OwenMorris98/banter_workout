@@ -17,7 +17,7 @@ export default function NameWorkout({ exercises }: IExerciseList) {
     return(
         <div>
             <div className="mb-4">
-                <label htmlFor="workoutName" className="block text-lg font-medium text-gray-300">Name Workout</label>
+                <label htmlFor="workoutName" className="block text-lg font-medium text-gray-300">Workout Plan Name</label>
                 <input type="text"
                     name="workoutName" 
                     id="workoutName" 
