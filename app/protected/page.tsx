@@ -34,6 +34,9 @@ export default async function ProtectedPage() {
       <CreateUsername UserId={user?.id}/>
     )
   }
+  else {
+    redirect("/workouts");
+  }
 
   return (
     <div className="flex-1 w-full flex flex-col gap-12">
@@ -44,7 +47,7 @@ export default async function ProtectedPage() {
         <p className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
           Welcome {UserInfo.Username}!
         </p>
-        <Timer />
+        {/* <Timer /> */}
         <div className="mt-4">
           <p className="text-sm text-gray-500">Checking credientials...</p>
         </div>
