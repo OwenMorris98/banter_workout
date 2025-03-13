@@ -9,6 +9,9 @@ interface CreateWorkoutRequest {
     Date : Date;
     UserId: string;
     IsShared: boolean;
+    RecSets: string;
+    RecReps: string;
+
 }
 
 export async function POST(request: Request) {
@@ -26,7 +29,7 @@ export async function POST(request: Request) {
         // Insert workouts into the database
         const { data, error } = await supabase
             .from('Workouts')
-            .insert({Id : body.Id, Name: body.Name, Date : body.Date, UserId : body.UserId, IsShared: body.IsShared })
+            .insert({Id : body.Id, Name: body.Name, Date : body.Date, UserId : body.UserId, IsShared: body.IsShared})
             .select() 
 
         if (error) throw error

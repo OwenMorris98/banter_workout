@@ -3,73 +3,33 @@ import { useState } from 'react';
 import { Button } from '../../ui/button';
 import { Input } from '../../ui/input';
 import { ExerciseInput } from './workout-card';
+import type { 
+  Message, 
+  WorkoutPlan, 
+  ExerciseRequest, 
+  WorkoutChatProps 
+} from './chat-interfaces';
+import { useWorkoutChat } from '../../hooks/workouts/useWorkoutChat';
+// Removed the import for toast as it's causing an error due to missing module or type declarations.
 
-interface Message {
-  role: 'user' | 'assistant'; // Define the roles
-  content: string;
-}
-
-interface Exercise {
-  name: string;
-  type: "compound" | "isolation";
-  sets: number;
-  repetitions: number;
-  description: string;
-}
-
-interface WorkoutDay {
-  day: string;
-  name: string;
-  exercises: Exercise[];
-}
-
-interface WorkoutPlan {
-  schedule: WorkoutDay[];
-}
-
-interface WorkoutChatProps {
-  onChatStart: () => void;
-  onChatEnd: () => void;
-}
-
-export default function WorkoutChat({ onChatStart, onChatEnd }: WorkoutChatProps) {
-  const [messages, setMessages] = useState<Message[]>([]); // Specify the type here
-  const [workoutPlan, setWorkoutPlan] = useState<WorkoutPlan>();
-  const [input, setInput] = useState('');
-  const [header, setHeader] = useState<boolean>(true);
-  const [submitted, setSubmitted] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false); // Add loading state
-
-  const handleSubmit = async (e : any) => {
-    e.preventDefault();
-    setIsLoading(true); // Set loading to true when starting request
-    onChatStart();
-    const userMessage: Message = { role: 'user', content: input }; // Use the Message type
-    setMessages([...messages, userMessage]);
-    const updatedMessage : Message[] = [...messages, userMessage]
-    console.log(userMessage);
-    let plan = await fetchWorkout(updatedMessage);
-    setWorkoutPlan(plan);
-    setInput('');
-    setIsLoading(false); // Set loading to false when request completes
-    onChatEnd();
-    setSubmitted(true);
-  };
-
-  async function fetchWorkout(messages : Message[]) : Promise<WorkoutPlan> {
-    const response = await fetch('/api/workouts/chat-workout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: [...messages] }),
-    });
-    console.log(response);
-    const data: WorkoutPlan = await response.json();
-    return data;
-  }
-
-  const handleSave = () => {
-  console.log(workoutPlan?.schedule)
-  }
+export default function WorkoutChat({ onChatStart, onChatEnd, user }: WorkoutChatProps) {
+  const {
+    messages,
+    workoutPlan,
+    input,
+    setInput,
+    setWorkoutPlan,
+    isLoading,
+    isSaving,
+    submitted,
+    handleSubmit,
+    handleSave
+  } = useWorkoutChat({ 
+    onChatStart, 
+    onChatEnd,
+    onSaveSuccess: () => console.log('Workouts saved successfully'),
+    onSaveError: (error) => console.error('Error saving workouts:', error.message)
+  });
 
   return (
     <div className="flex flex-col space-y-4 max-w-xl mx-auto">
@@ -77,8 +37,18 @@ export default function WorkoutChat({ onChatStart, onChatEnd }: WorkoutChatProps
         {workoutPlan ? (
           <div>
             <div className='flex justify-between'>
-            <h2 className="text-xl font-bold underline mb-4 borderrounded-lg p-1">Workout Plan</h2>
-            <Button type="submit" onClick={handleSave}>Save</Button>
+              <h2 className="text-xl font-bold underline mb-4 borderrounded-lg p-1">Workout Plan</h2>
+              <Button 
+                type="submit" 
+                onClick={() => handleSave(user)}
+                disabled={isSaving}
+              >
+                {isSaving ? (
+                  <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
+                ) : (
+                  'Save'
+                )}
+              </Button>
             </div>
             {workoutPlan?.schedule?.map((day, dayIndex) => (
               <div key={dayIndex} className="mb-6  pb-4 border rounded-lg p-4">
@@ -132,23 +102,23 @@ export default function WorkoutChat({ onChatStart, onChatEnd }: WorkoutChatProps
         )}
       </div>
       {!submitted && 
-      <form onSubmit={handleSubmit} className="flex space-x-4">
-        <Input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask for a workout plan..."
-          className="flex-grow"
-          disabled={isLoading} // Disable input while loading
-        />
-        <Button type="submit" disabled={isLoading}> {/* Disable button while loading */}
-          {isLoading ? (
-            <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
-          ) : (
-            'Send'
-          )}
-        </Button>
-      </form>
-}
+        <form onSubmit={handleSubmit} className="flex space-x-4">
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Ask for a workout plan..."
+            className="flex-grow"
+            disabled={isLoading}
+          />
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? (
+              <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
+            ) : (
+              'Send'
+            )}
+          </Button>
+        </form>
+      }
     </div>
   );
 }

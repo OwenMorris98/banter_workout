@@ -2,12 +2,17 @@
 
 import { useState } from "react";
 import { SubmitButton } from "../submit-button";
-import { IExerciseList } from "@/lib/excerciseInterfaces/IExerciseList"; 
-import ExerciseList from "./excercise-list";
+import { Exercise } from "@/lib/excerciseInterfaces/IExerciseList"; 
 import NameWorkout from "./name-workout";
 import WorkoutChat from "./chat/workout-chat";
+import { User } from "@supabase/supabase-js";
 
-export default function PlanWorkout({ exercises }: IExerciseList) {
+interface PlanWorkoutProps {
+    exercises: Exercise[];
+    user : User | null;
+}
+
+export default function PlanWorkout({ exercises, user }: PlanWorkoutProps) {
     const [showNameWorkout, setShowNameWorkout] = useState(true);
     const [showHeaderText, setShowHeaderText] = useState(true);
 
@@ -28,7 +33,7 @@ export default function PlanWorkout({ exercises }: IExerciseList) {
          </div>
        )}
         <div>
-        <WorkoutChat onChatStart={() => setShowNameWorkout(false)} onChatEnd={() => setShowHeaderText(false)}/>
+        <WorkoutChat onChatStart={() => setShowNameWorkout(false)} onChatEnd={() => setShowHeaderText(false)} user={user} />
         </div>
         </div>
     )

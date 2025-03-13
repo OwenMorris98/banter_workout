@@ -11,6 +11,16 @@ export async function checkUserAuth() {
   return user;
 }
 
+export async function checkIfUserAuth() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return null;
+  }
+  return user;
+}
+
 export const fetchUsername = async (userId : string) => {
   const supabase = await createClient();
   const {data, error} = await supabase.from('Users').select("Username").eq('Id', userId).single();

@@ -12,3 +12,8 @@ export interface CreateWorkoutProps {
         Name: string;
     }[];
 }
+
+export interface Exercise {
+    Id: string | number;
+    Name: string;
+}

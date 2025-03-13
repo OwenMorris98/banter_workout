@@ -3,13 +3,15 @@ import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
-interface CreateWorkoutRequest {
-    workoutName : string,
-    exercises: {
-        Id: string | number;
-        Name: string;
-    }[]
+interface ExerciseRequest {
+    Name: string;
+    RecSets: string;
+    RecReps: string;
 }
+interface CreateWorkoutRequest {
+    name : string,
+    exercises: ExerciseRequest[]
+}[]
 
 export async function POST(request: Request) {
     try {
@@ -20,7 +22,7 @@ export async function POST(request: Request) {
         
         
         const workouts = body.exercises.map(exercise => ({
-            WorkoutName: body.workoutName,
+            WorkoutName: body.name,
             ExerciseName: exercise.Name,
             UserId: user?.id
         }));
