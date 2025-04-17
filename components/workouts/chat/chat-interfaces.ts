@@ -35,5 +35,6 @@ export interface Message {
   export interface WorkoutChatProps {
     onChatStart: () => void;
     onChatEnd: () => void;
-    user : User | null;
+    user: User | null;
+    initialWorkoutPlan?: WorkoutPlan;
   }

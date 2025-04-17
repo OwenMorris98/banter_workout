@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { SubmitButton } from "../submit-button";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { IExerciseList } from "@/lib/excerciseInterfaces/IExerciseList";
 import ExerciseList from "./excercise-list";
 
@@ -18,16 +20,16 @@ export default function NameWorkout({ exercises }: IExerciseList) {
         <div>
             <div className="mb-4">
                 <label htmlFor="workoutName" className="block text-lg font-medium text-gray-300">Workout Plan Name</label>
-                <input type="text"
+                <Input type="text"
                     name="workoutName" 
                     id="workoutName" 
-                    className="mt-2 block w-full rounded-lg border-gray-500 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-lg" 
+                    className="flex-grow mt-2" 
                     value={workoutName}
                     onChange={(e) => setWorkoutName(e.target.value)}
                     readOnly={saveWorkoutName}
                     required />
             </div> 
-            {!saveWorkoutName && <SubmitButton onClick={saveName}>Save</SubmitButton>}
+            {!saveWorkoutName && <Button onClick={saveName}>Save</Button>}
             {saveWorkoutName && (
                 <div>
                     <div className="my-2">
