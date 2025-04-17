@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Message, WorkoutPlan, ExerciseRequest } from '@/components/workouts/chat/chat-interfaces';
 import { User } from '@supabase/supabase-js';
 
@@ -21,19 +21,66 @@ export function useWorkoutChat({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const [isOffline, setIsOffline] = useState<boolean>(false);
 
-async function fetchWorkout(messages: Message[]): Promise<WorkoutPlan> {
+  // Add offline detection
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    
+    // Set initial state
+    if (typeof navigator !== 'undefined') {
+      setIsOffline(!navigator.onLine);
+    }
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  async function fetchWorkout(messages: Message[]): Promise<WorkoutPlan> {
+    if (isOffline) {
+      // Check cache for previously generated plans when offline
+      try {
+        if (typeof caches !== 'undefined') {
+          const cache = await caches.open('workout-app-v1');
+          const cachedResponse = await cache.match('/api/workouts/chat-workout');
+          
+          if (cachedResponse) {
+            return await cachedResponse.json();
+          }
+        }
+      } catch (e) {
+        console.error('Error accessing cache:', e);
+      }
+      
+      throw new Error('You are offline and no cached workouts are available');
+    }
+    
+    // Original implementation for online mode
     const response = await fetch('/api/workouts/chat-workout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: [...messages] }),
     });
+    
     const data: WorkoutPlan = await response.json();
     return data;
   }
 
-    const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (isOffline) {
+      // Show an error or notification that user is offline
+      console.error('Cannot generate workouts while offline');
+      return;
+    }
+    
     setIsLoading(true);
     onChatStart?.();
     
@@ -54,11 +101,26 @@ async function fetchWorkout(messages: Message[]): Promise<WorkoutPlan> {
     }
   };
 
-    const handleSave = async (user: User | null) => {
-    if (!user || !workoutPlan?.schedule) {
-        copyWorkoutToClipboard();
-      console.log('User not authenticated or no workout plan');
+  const handleSave = async (user: User | null) => {
+    if (!workoutPlan?.schedule) {
+      console.log('No workout plan');
       return false;
+    }
+
+    // Always save to localStorage for offline access
+    try {
+      // Import dynamically to avoid issues with SSR
+      const { saveWorkoutToLocalStorage } = await import('@/lib/storage/workout-storage');
+      saveWorkoutToLocalStorage(workoutPlan);
+    } catch (e) {
+      console.error('Error saving to localStorage:', e);
+    }
+
+    // If offline or no user, just save locally and return
+    if (isOffline || !user) {
+      copyWorkoutToClipboard();
+      onSaveSuccess?.();
+      return true;
     }
 
     setIsSaving(true);
@@ -96,9 +158,55 @@ async function fetchWorkout(messages: Message[]): Promise<WorkoutPlan> {
       copyWorkoutToClipboard();
       setIsSaving(false);
     }
-   
   };
-    const copyWorkoutToClipboard = () => {
+
+  // Add function to share workout using Web Share API if available
+  const shareWorkout = async () => {
+    if (!workoutPlan) return false;
+    
+    // Format the workout for sharing
+    const formattedWorkout = formatWorkoutForSharing(workoutPlan);
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'My Workout Plan',
+          text: formattedWorkout,
+          url: window.location.href
+        });
+        return true;
+      } catch (error) {
+        // Fall back to clipboard
+        console.log('Error sharing:', error);
+        navigator.clipboard.writeText(formattedWorkout);
+        return true;
+      }
+    } else {
+      // Use clipboard API as before
+      navigator.clipboard.writeText(formattedWorkout);
+      return true;
+    }
+  };
+
+  // Helper function to format workout for sharing
+  const formatWorkoutForSharing = (plan: WorkoutPlan): string => {
+    let result = '📅 MY WORKOUT PLAN\n\n';
+    
+    plan.schedule.forEach(day => {
+      result += `🔹 ${day.day}: ${day.name || 'Workout'}\n`;
+      
+      day.exercises.forEach(exercise => {
+        result += `   • ${exercise.name}: ${exercise.sets} sets x ${exercise.repetitions} reps\n`;
+      });
+      
+      result += '\n';
+    });
+    
+    result += '💪 Created with AI Workout Planner';
+    return result;
+  };
+
+  const copyWorkoutToClipboard = () => {
     if (!workoutPlan?.schedule) {
       console.log('No workout plan to copy');
       return false;
@@ -124,10 +232,8 @@ async function fetchWorkout(messages: Message[]): Promise<WorkoutPlan> {
     } catch (error) {
       console.error('Failed to copy workout to clipboard:', error);
       return false;
+    }
   };
-};
-
- 
 
   const resetChat = () => {
     setMessages([]);
@@ -144,9 +250,12 @@ async function fetchWorkout(messages: Message[]): Promise<WorkoutPlan> {
     setWorkoutPlan,
     isLoading,
     isSaving,
+    isOffline,
     submitted,
+    setSubmitted,
     handleSubmit,
     handleSave,
+    shareWorkout,
     resetChat
   };
 }

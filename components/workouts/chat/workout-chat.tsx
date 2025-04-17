@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '../../ui/button';
 import { Input } from '../../ui/input';
 import { ExerciseInput } from './workout-card';
@@ -12,7 +12,7 @@ import type {
 import { useWorkoutChat } from '../../hooks/workouts/useWorkoutChat';
 // Removed the import for toast as it's causing an error due to missing module or type declarations.
 
-export default function WorkoutChat({ onChatStart, onChatEnd, user }: WorkoutChatProps) {
+export default function WorkoutChat({ onChatStart, onChatEnd, user, initialWorkoutPlan }: WorkoutChatProps) {
   const {
     messages,
     workoutPlan,
@@ -21,15 +21,25 @@ export default function WorkoutChat({ onChatStart, onChatEnd, user }: WorkoutCha
     setWorkoutPlan,
     isLoading,
     isSaving,
+    isOffline,
     submitted,
+    setSubmitted,
     handleSubmit,
-    handleSave
+    handleSave,
+    shareWorkout
   } = useWorkoutChat({ 
     onChatStart, 
     onChatEnd,
     onSaveSuccess: () => console.log('Workouts saved successfully'),
     onSaveError: (error) => console.error('Error saving workouts:', error.message)
   });
+
+  useEffect(() => {
+    if (initialWorkoutPlan && setWorkoutPlan) {
+      setWorkoutPlan(initialWorkoutPlan);
+      setSubmitted(true);
+    }
+  }, [initialWorkoutPlan, setWorkoutPlan, setSubmitted]);
 
   return (
     <div className="flex flex-col space-y-4 max-w-xl mx-auto">
@@ -38,17 +48,32 @@ export default function WorkoutChat({ onChatStart, onChatEnd, user }: WorkoutCha
           <div>
             <div className='flex justify-between'>
               <h2 className="text-xl font-bold underline mb-4 borderrounded-lg p-1">Workout Plan</h2>
-              <Button 
-                type="submit" 
-                onClick={() => handleSave(user)}
-                disabled={isSaving}
-              >
-                {isSaving ? (
-                  <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
-                ) : (
-                  'Save'
-                )}
-              </Button>
+              <div className="flex space-x-2">
+                <Button 
+                  type="button" 
+                  onClick={() => shareWorkout()}
+                  disabled={isSaving}
+                  variant="outline"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                    <polyline points="16 6 12 2 8 6"></polyline>
+                    <line x1="12" y1="2" x2="12" y2="15"></line>
+                  </svg>
+                  Share
+                </Button>
+                <Button 
+                  type="submit" 
+                  onClick={() => handleSave(user)}
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
+                  ) : (
+                    'Save'
+                  )}
+                </Button>
+              </div>
             </div>
             {workoutPlan?.schedule?.map((day, dayIndex) => (
               <div key={dayIndex} className="mb-6  pb-4 border rounded-lg p-4">
