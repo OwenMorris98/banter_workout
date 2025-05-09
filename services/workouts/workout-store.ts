@@ -1,5 +1,6 @@
 import { Workouts } from "@/utils/supabase/database.types";
 import { createClient } from "@/utils/supabase/server";
+import { Routine, Routines } from "@/lib/routines/routine";
 
 /**
  * Fetches exercises for a given user's workouts.
@@ -165,5 +166,26 @@ export const fetchExerciseList = async () => {
     }
     return data;
 
+}
+
+/**
+ * Fetches the list of routine names per user from the database.
+ * 
+ * This function queries the database for all routines by user and returns them in a list. It is used to populate the routine list.
+ * 
+ * @returns {Array} An array of routine objects.
+ * @throws {Error} Throws an error if the database query fails.
+ */
+export const fetchRoutineList = async (userId : string) : Promise<Routine[]> => {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('Workouts')
+    .select('Id, Name')
+    .eq('UserId', userId);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+    return data as Routine[];
 }
 

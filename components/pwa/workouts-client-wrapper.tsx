@@ -46,7 +46,7 @@ export function WorkoutsClientWrapper({ children }: { children: React.ReactNode 
                 <div className="flex justify-center mb-4">
                   <InstallButton isDesktop={true} />
                 </div>
-                <DesktopInstallGuide />
+                
               </>
             ) : (
               <InstallSection />

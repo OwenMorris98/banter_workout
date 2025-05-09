@@ -35,7 +35,7 @@ export default async function Page() {
       </div>
       ) : (
       <div className='flex flex-col items-center space-y-4 p-4'>
-        <WorkoutButton buttonName="Plan Workout" href='/workouts/add-workout'/>
+        <WorkoutButton buttonName="AI Coach" href='/coach'/>
       </div>
       )}
     </WorkoutsClientWrapper>
